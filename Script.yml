@@ -4,12 +4,12 @@
   hosts: "*"
   tasks: 
    -name: upgrade the phone servers
-    shell: fwconsole ma upgradeall
+     shell: fwconsole ma upgradeall
           
    -name: reload the fw console
-    shell: fwconsole reload
+     shell: fwconsole reload
           
    -name: reboot the system
-    shell: reboot
+     shell: reboot
           
           
