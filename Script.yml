@@ -2,7 +2,7 @@
 # ansible-playbook PBX.yml
 
 - name : update the phone servers on all clients
-  hosts: "*"
+  hosts: all
   tasks: 
    -name: upgrade the phone servers
     shell: fwconsole ma upgradeall
