@@ -4,7 +4,7 @@
   hosts: "*"
   tasks: 
    - name: upgrade the phone servers
-     shell: fwconsole ma upgradeall
+     shell: fwconsole ma upgradeall > /root/test/output
           
    - name: reload the fw console
      shell: fwconsole reload
