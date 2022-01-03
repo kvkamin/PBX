@@ -4,4 +4,4 @@
   hosts: "*"
   tasks:
    - name: Echo
-     shell: Echo "connected"
+     shell: echo "connected"
