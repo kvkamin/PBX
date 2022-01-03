@@ -1,0 +1,7 @@
+# ansible-playbook PBX.yml
+
+- name : Echo all of the ansible servers
+  hosts: "*"
+  tasks:
+   - name: Echo
+     shell: Echo "connected"

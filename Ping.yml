@@ -1,7 +1,0 @@
-# ansible-playbook PBX.yml
-
-- name : Ping all of the ansible servers
-  hosts: "*"
-  tasks:
-   - name: Ping
-     shell: ansible all -m ping
