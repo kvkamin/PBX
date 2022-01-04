@@ -5,7 +5,7 @@
   tasks:
    - name: Echo
      #shell: echo "connected"
-     shell: !watch
+     shell: '!watch'
 
      register: command_output
    
