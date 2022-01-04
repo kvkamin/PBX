@@ -5,3 +5,6 @@
   tasks:
    - name: Echo
      shell: echo "connected"
+   
+   - debug: 
+            var: command_output.stdout_lines
