@@ -4,11 +4,20 @@
   hosts: "*"
   tasks: 
    - name: upgrade the phone servers
-     shell: fwconsole ma upgradeall > /root/Test/output
+     shell: fwconsole ma upgradeall -y
+     register: upgrade_output     
+     
+   - debug: 
+         var: upgrade_output.stdout_lines
+          
           
    - name: reload the fw console
      shell: fwconsole reload
-          
+     register: reload_output
+     
+   - debug: 
+            var: reload_output.stdout_lines
+     
  #  - name: reboot the system
   #   shell: reboot
           
