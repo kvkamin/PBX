@@ -5,8 +5,8 @@
   tasks:
    - name: Echo
      #shell: echo "connected"
-     shell: '!watch'
-
+     shell: rasterisk -x  "core show channels verbose"
+     
      register: command_output
    
    - debug: 
