@@ -4,7 +4,9 @@
   hosts: "*"
   tasks:
    - name: Echo
-     shell: echo "connected"
+     #shell: echo "connected"
+     shell: watch -n 1 "asterisk -rx 'iax2 show peers' && asterisk -rx 'core show channels'| grep call"
+
      register: command_output
    
    - debug: 
