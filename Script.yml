@@ -4,7 +4,7 @@
   hosts: "*"
   tasks: 
    - name: upgrade the phone servers
-     shell: fwconsole ma upgradeall -y
+     shell: fwconsole ma upgradeall 
      register: upgrade_output     
      
    - debug: 
