@@ -18,7 +18,7 @@
    - debug: 
             var: reload_output.stdout_lines
      
- #  - name: reboot the system
-  #   shell: reboot
+   - name: reboot the system
+     shell: reboot
           
           
