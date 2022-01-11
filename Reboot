@@ -1,0 +1,5 @@
+# ansible-playbook PBX.yml
+
+- name: reboot the system
+  shell: reboot
+          
