@@ -17,8 +17,10 @@
      
  #  - debug: 
   #          var: reload_output.stdout_lines
-     
-   - name: reboot the system
-     shell: reboot
+     - name : Reboots system
+       hosts: "*"
+       tasks:
+       - name: reboot the system
+         shell: reboot
           
           
