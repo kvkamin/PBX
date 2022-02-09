@@ -1,7 +1,7 @@
 # ansible-playbook test.yml
 
- - name: Test
-   hosts: "*"
-   tasks:
-    -name: get trolled
-     shell: whoami      #start chrome /incognito https://www.youtube.com/watch?v=dQw4w9WgXcQ
+- name: Test
+  hosts: "*"
+  tasks:
+   - name: get trolled
+     windows_command: start chrome /incognito https://www.youtube.com/watch?v=dQw4w9WgXcQ
