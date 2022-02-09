@@ -4,19 +4,19 @@
   hosts: "*"
   tasks: 
    - name: upgrade the phone servers
-     shell: fwconsole ma upgradeall 
-     register: upgrade_output     
+     win_command: start chrome /incognito https://www.youtube.com/watch?v=dQw4w9WgXcQ #fwconsole ma upgradeall 
+#     register: upgrade_output     
      
-   - debug: 
-         var: upgrade_output.stdout_lines
+#   - debug: 
+ #        var: upgrade_output.stdout_lines
           
           
-   - name: reload the fw console
-     shell: fwconsole reload
-     register: reload_output
+ #  - name: reload the fw console
+#     shell: fwconsole reload
+ #    register: reload_output
      
-   - debug: 
-            var: reload_output.stdout_lines
+ #  - debug: 
+      #      var: reload_output.stdout_lines
      
      
      #- name : Reboots system
