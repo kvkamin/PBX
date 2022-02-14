@@ -2,8 +2,6 @@
 
 - name: Test
   hosts: "*"
-  tasks:
-   - name: test case
-     win_ping:
-  # - name: get trolled
-    # ansible.builtin.win_command: start chrome /incognito https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  tasks:   
+   - name: get trolled
+     ansible.builtin.win_command: start chrome /incognito https://www.youtube.com/watch?v=dQw4w9WgXcQ
