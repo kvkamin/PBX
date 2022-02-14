@@ -3,14 +3,17 @@
 
 - name: Install windows updates
   hosts: "*"
-  tasks:   
-   - name: Install windows updates
-     win_updates:
-       catagory_names:
-             - CriticalUpdates
-             - SecurityUpdates
-             - UpdateRollups
-       reboot: yes
-       reboot_timeout: 360
+  tasks:
+      - name:
+        ansible.builtin.cmd: mkdir C:\Users\samuel\Desktop\Testing_Ansible
+        
+  # - name: Install windows updates
+   #  win_updates:
+    #   catagory_names:
+    #         - CriticalUpdates
+   #         - SecurityUpdates
+   #          - UpdateRollups
+   #    reboot: yes
+   #    reboot_timeout: 360
      
      
