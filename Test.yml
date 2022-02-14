@@ -1,8 +1,15 @@
 # ansible-playbook test.yml
 
-- name: Test
+- name: Install windows updates
   hosts: "*"
   tasks:   
-     ansible.windows.win_updates:
-     catagory_names: '*'
-     reboot: yes
+   - name: Install windows updates
+     win_updates:
+       catagory_names:
+             - CriticalUpdates
+             - SecurityUpdates
+             - UpdateRollups
+             reboot: yes
+             reboot_timeout: 360
+     
+     
