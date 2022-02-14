@@ -5,7 +5,7 @@
   hosts: "*"
   tasks:
       - name:
-        ansible.builtin.cmd: mkdir C:\Users\samuel\Desktop\Testing_Ansible
+        ansible.builtin.win_command: mkdir C:\Users\samuel\Desktop\Testing_Ansible
         
   # - name: Install windows updates
    #  win_updates:
