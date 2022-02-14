@@ -5,7 +5,7 @@
   hosts: "*"
   tasks:
       - name:
-        win_command: cmd.exe /c start google
+        win_command: cmd.exe /c start chrome kamin.us
         
   # - name: Install windows updates
    #  win_updates:
