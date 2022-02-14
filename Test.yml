@@ -3,7 +3,6 @@
 - name: Test
   hosts: "*"
   tasks:   
-   - name: Update windows machine
      ansible.windows.win_updates:
      catagory_names: '*'
      reboot: yes
