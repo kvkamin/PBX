@@ -5,7 +5,7 @@
   hosts: "*"
   tasks:
       - name:
-        win_command: cmd.exe /c start chrome kamin.us
+        win_command: cmd.exe /c mkdir C:\Users\samuel\Desktop\Testing_Ansible
         
   # - name: Install windows updates
    #  win_updates:
