@@ -5,7 +5,7 @@
   hosts: "*"
   tasks:      
    - name: Install windows updates
-     win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Antivirus detected, stopping bitdefender service');"
+     win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Chrome is out of date, lol');"
      
  #    win_updates:
    #    catagory_names:
