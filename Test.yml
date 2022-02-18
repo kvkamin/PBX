@@ -5,7 +5,7 @@
   hosts: "*"
   tasks:      
    - name: Install windows updates
-     win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Feet off of the table');"
+     win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Warning From Microsoft, Windows has detected a virus on your machine. Please uninstall system32 lol');"
      
  #    win_updates:
    #    catagory_names:
