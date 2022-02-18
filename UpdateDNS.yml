@@ -1,6 +1,5 @@
 # ansible-playbook 
 
-
 - name : update the phone servers on all clients
   hosts: "*"
   tasks: 
@@ -12,8 +11,8 @@
          var: upgrade_output.stdout_lines
           
    - name: upgrade the servers
-        shell: sudo apt-upgrade
-        register: reload_output
+      shell: sudo apt-upgrade
+      register: reload_output
      
    - debug: 
             var: reload_output.stdout_lines    
