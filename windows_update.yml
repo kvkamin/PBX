@@ -1,0 +1,14 @@
+# ansible-playbook windows_update.yml
+
+- name : see if update is available
+  hosts: "*"
+  tasks: 
+   - name: display output
+     ansible.windows.win_update:
+     catagory_names:
+     - SecurityUpdates
+     state: searched
+     register: search_output     
+     
+   - debug: 
+         var: search_output.stdout_lines
