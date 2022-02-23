@@ -25,11 +25,11 @@
    - debug: 
             var: update_output.stdout_lines
      
-    - name: Upgrade the sytem
-      shell: yum upgrade -y
-      register: upgrade_output
+   - name: Upgrade the sytem
+     shell: yum upgrade -y
+     register: upgrade_output
      
-     - debug: 
+  - debug: 
             var: upgrade_output.stdout_lines
      
      #- name : Reboots system
