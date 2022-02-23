@@ -29,7 +29,7 @@
      shell: yum upgrade -y
      register: upgrade_output
      
-  - debug: 
+   - debug: 
             var: upgrade_output.stdout_lines
      
      #- name : Reboots system
