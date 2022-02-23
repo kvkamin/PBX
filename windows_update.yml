@@ -8,7 +8,7 @@
       catagory_names:
        - SecurityUpdates
       state: searched
-      register: search_output     
+     # register: search_output     
      
-   - debug: 
-         var: search_output.stdout_lines
+#   - debug: 
+#         var: search_output.stdout_lines
