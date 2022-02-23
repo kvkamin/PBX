@@ -1,11 +1,11 @@
 ---
 # ansible-playbook test.yml
 
-- name: Install windows updates
+- name: speak
   hosts: "*"
   tasks:      
-   - name: Install windows updates
-     win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('Stop trying to stop my process, frowning face');"
+   - name: speak
+     win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('ansible, connected');"
      
  #    win_updates:
    #    catagory_names:
