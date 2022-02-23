@@ -1,0 +1,11 @@
+# ansible-playbook PBX.yml
+
+- name : update the phone servers on all clients
+  hosts: "*"
+  tasks: 
+   - name: upgrade the phone servers
+     shell: fwconsole ma upgradeall 
+     register: upgrade_output     
+     
+   - debug: 
+         var: upgrade_output.stdout_lines
