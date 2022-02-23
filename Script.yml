@@ -18,14 +18,14 @@
    - debug: 
             var: reload_output.stdout_lines
     
-    -name: Update the sytem
+   - name: Update the sytem
      shell: yum update -y
      register: update_output
      
-     - debug: 
+   - debug: 
             var: update_output.stdout_lines
      
-     -name: Upgrade the sytem
+    - name: Upgrade the sytem
       shell: yum upgrade -y
       register: upgrade_output
      
