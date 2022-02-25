@@ -4,10 +4,7 @@
 - name: speak
   hosts: "*"
   tasks:      
-#   - name: speak
-    # win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('ansible, connected');"
-     
-     win_updates:
+    win_updates:
       catagory_names:
              - CriticalUpdates
             - SecurityUpdates
@@ -18,3 +15,5 @@
      
  # - name:
       #  win_command: cmd.exe /c mkdir C:\Users\samuel\Desktop\Testing_Ansible
+#   - name: speak
+    # win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('ansible, connected');"
