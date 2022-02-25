@@ -5,7 +5,6 @@
   hosts: "*"
   tasks:      
    - name: speak
-     win_ping:
      win_command:  PowerShell -Command "Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('ansible, connected');"
      
  #    win_updates:
