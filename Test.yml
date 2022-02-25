@@ -9,7 +9,7 @@
              - CriticalUpdates
              - SecurityUpdates
              - UpdateRollups
-       reboot: yes
+      reboot: yes
        reboot_timeout: 360
      
      
