@@ -2,15 +2,14 @@
 # ansible-playbook test.yml
 
 - name: speak
-  hosts: "*"
-  tasks:      
-    win_updates:
-      catagory_names:
-             - CriticalUpdates
-             - SecurityUpdates
-             - UpdateRollups
-      reboot: yes
-      reboot_timeout: 360
+  hosts: "*"   
+  win_updates:
+    catagory_names:
+           - CriticalUpdates
+           - SecurityUpdates
+           - UpdateRollups
+    reboot: yes
+    reboot_timeout: 360
      
      
  # - name:
