@@ -7,7 +7,7 @@
     win_updates:
       catagory_names:
              - CriticalUpdates
-            - SecurityUpdates
+             - SecurityUpdates
              - UpdateRollups
        reboot: yes
        reboot_timeout: 360
