@@ -1,7 +1,7 @@
 ---
 # ansible-playbook test.yml
 
-  hosts: "*"   
+- hosts: "*"   
   tasks:
   - name: Choose which Windows updates to install
   win_updates:
