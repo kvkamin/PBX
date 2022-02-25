@@ -1,9 +1,8 @@
 ---
 # ansible-playbook test.yml
-
-- hosts: "*"   
+- name: Choose which Windows updates to install
+  hosts: "*"   
   tasks:
-  - name: Choose which Windows updates to install
   win_updates:
     category_names:
       - SecurityUpdates
