@@ -3,14 +3,14 @@
 
 - name: speak
   hosts: "*"   
-  ansible.windows.win_updates:
   tasks:
-   catagory_names:
-          - CriticalUpdates
-          - SecurityUpdates
-          - UpdateRollups
-   reboot: yes
-   reboot_timeout: 360
+   ansible.windows.win_updates:
+    catagory_names:
+           - CriticalUpdates
+           - SecurityUpdates
+           - UpdateRollups
+    reboot: yes
+    reboot_timeout: 360
      
      
  # - name:
