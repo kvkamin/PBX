@@ -3,11 +3,10 @@
   tasks:
   - name: Choose which Windows updates to install
     win_updates:
-        category_names: CriticalUpdates;
+        category_names: CriticalUpdates;SecurityUpdates; UpdateRollups;
         reboot: yes
         register: installed_update_count
-  - debug: 
-         var: installed_update_count
+  -     log_path: C:\ansible.install.txt
      
  # - name:
       #  win_command: cmd.exe /c mkdir C:\Users\samuel\Desktop\Testing_Ansible
