@@ -5,7 +5,8 @@
     win_updates:
         category_names: CriticalUpdates;
         reboot: yes
-      
+  - debug: 
+         var: installed_update_count
      
  # - name:
       #  win_command: cmd.exe /c mkdir C:\Users\samuel\Desktop\Testing_Ansible
