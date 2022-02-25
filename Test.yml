@@ -10,7 +10,7 @@
              - SecurityUpdates
              - UpdateRollups
       reboot: yes
-       reboot_timeout: 360
+      reboot_timeout: 360
      
      
  # - name:
