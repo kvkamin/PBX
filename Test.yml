@@ -3,7 +3,7 @@
 
 - name: speak
   hosts: "*"   
-  win_updates:
+  ansible.windows.win_updates:
     catagory_names:
            - CriticalUpdates
            - SecurityUpdates
