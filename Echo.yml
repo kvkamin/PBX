@@ -5,7 +5,7 @@
   tasks:
    - name: Echo
      #shell: echo "connected"
-     shell: asterisk -rx 'iax2 show peers' && asterisk -rx 'core show channels' && asterisk -rx 'sip show peers' | grep call
+     shell: rasterisk -x "core show channels verbose"
      
      register: command_output
    
