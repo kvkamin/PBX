@@ -3,17 +3,17 @@
 - name : update the phone servers on all clients
   hosts: "*"
   tasks: 
-   - name: upgrade the servers
-     shell: sudo apt-get update 
-     register: upgrade_output     
+   - name: update the servers
+     shell: sudo apt-get update
+     register: update_output     
      
    - debug: 
-         var: upgrade_output.stdout_lines
+         var: update_output.stdout_lines
           
    - name: upgrade the servers
-     shell: sudo apt-get upgrade
-     register: reload_output
+     shell: sudo apt-get upgrade -y
+     register: upgrade_output
      
    - debug: 
-            var: reload_output.stdout_lines    
+            var: upgrade_output.stdout_lines    
    
