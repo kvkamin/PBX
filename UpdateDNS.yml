@@ -1,12 +1,12 @@
 # ansible-playbook 
 
 hosts: "*"
-become: true
 tasks: 
    - name: upgrade the cloud dns servers
+     become: true
       apt: 
-       upgrade: dist
-       full_upgrade: yes
+       upgrade: yes
+       update_cache: yes
       autoremove: yes
  register: upgrade_output     
      
