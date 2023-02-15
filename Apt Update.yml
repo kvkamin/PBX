@@ -3,7 +3,7 @@
 - hosts: all
   become: yes
   tasks: 
-   - name: upgrade the cloud dns servers
+   - name: upgrade os in debian based servers
      apt: 
        upgrade: yes
        update_cache: yes
