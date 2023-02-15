@@ -8,8 +8,4 @@
        upgrade: yes
        update_cache: yes
        autoremove: yes
- register: upgrade_output     
-     
-  - debug: 
-        var: upgrade_output.stdout_lines
-          
+ 
