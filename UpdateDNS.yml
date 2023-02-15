@@ -5,7 +5,7 @@ become: true
 tasks: 
    - name: upgrade the cloud dns servers
       apt: 
-       upgrade: yes
+       upgrade: dist
        full_upgrade: yes
       autoremove: yes
  register: upgrade_output     
