@@ -1,10 +1,13 @@
 # ansible-playbook 
 
-- name : update the phone servers on all clients
   hosts: "*"
+  become: true
   tasks: 
    - name: upgrade the cloud dns servers
-      apt: upgrade=dist force_apt_get=yes
+      apt: 
+      upgrade:yes
+      full_upgrade:yes
+      autoremove: yes
  register: upgrade_output     
      
   - debug: 
