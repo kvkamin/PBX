@@ -3,17 +3,10 @@
 - name : update the phone servers on all clients
   hosts: "*"
   tasks: 
-   - name: upgrade the servers
-     shell: sudo apt-get update 
-     register: upgrade_output     
+   - name: upgrade the cloud dns servers
+      apt: upgrade=dist force_apt_get=yes
+ register: upgrade_output     
      
-   - debug: 
-         var: upgrade_output.stdout_lines
+  - debug: 
+        var: upgrade_output.stdout_lines
           
-   - name: upgrade the servers
-     shell: sudo apt-get upgrade
-     register: reload_output
-     
-   - debug: 
-            var: reload_output.stdout_lines    
-   
