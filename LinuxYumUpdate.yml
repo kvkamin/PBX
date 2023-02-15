@@ -1,0 +1,11 @@
+# ansible-playbook 
+
+- hosts: all
+  become: yes
+  tasks: 
+   - name: upgrade the redhat based servers
+     yum: 
+       state: latest
+       upgrade: yes
+       update_cache: yes
+       autoremove: yes
