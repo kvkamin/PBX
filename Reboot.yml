@@ -17,7 +17,7 @@
       wait: 300
       register: reboot_result
 
-  - name: Check the reboot is successful
-    assert:
+   - name: Check the reboot is successful
+     assert:
       that: reboot_result.finished
-    when: reboot_result.finished
+      when: reboot_result.finished
