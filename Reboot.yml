@@ -12,10 +12,10 @@
       register: reboot_task
       
    - name: Wait for reboot to complete
-    async_status:
+     async_status:
       jid: "{{ reboot_task.ansible_job_id }}"
       wait: 300
-    register: reboot_result
+      register: reboot_result
 
   - name: Check the reboot is successful
     assert:
