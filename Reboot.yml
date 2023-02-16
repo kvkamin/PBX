@@ -1,8 +1,11 @@
 # ansible-playbook PBX.yml
 
-- name : update the phone servers on all clients
+- name : reboot linux systems
   hosts: "*"
+  become: yes
   tasks: 
    - name: reboot the system
-     shell: reboot
+     command: /sbin/reboot
+     async: 0
+     poll:0
           
