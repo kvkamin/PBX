@@ -1,11 +1,15 @@
 # ansible-playbook PBX.yml
 
-- name : reboot linux systems
-  hosts: "*"
-  become: yes
-  tasks: 
-   - name: reboot the system
-     command: /sbin/reboot
-     async: 0
-     poll: 0
+- name: Reboot the machine
+  shell: "sleep 5 && reboot"
+
+  async: 1
+  poll: 0
+
+- name: Wait for the machine to come back online
+  wait_for_connection:
+    connect_timeout: 60
+    sleep: 5
+    delay: 5
+    timeout: 300
           
