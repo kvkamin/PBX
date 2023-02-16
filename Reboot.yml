@@ -5,10 +5,10 @@
   tasks:
     - name: Reboot 
       ansible.builtin.shell: shutdown -r now
-       async: 1
-       poll: 0
-       ignore_error: true
-       register: reboot_task
+        async: 1
+        poll: 0
+        ignore_error: true
+        register: reboot_task
       
     - name: Wait for reboot to complete
       async_status:
