@@ -3,21 +3,20 @@
 - hosts: all
   become: true
   tasks:
-   - name: Reboot 
-     ansible.builtin.shell: 
-      cmd: shutdown -r now
-      async: 1
-      poll: 0
-      ignore_error: true
-      register: reboot_task
+    - name: Reboot 
+      ansible.builtin.shell: shutdown -r now
+       async: 1
+       poll: 0
+       ignore_error: true
+       register: reboot_task
       
-   - name: Wait for reboot to complete
-     async_status:
-      jid: "{{ reboot_task.ansible_job_id }}"
-      wait: 300
-      register: reboot_result
+    - name: Wait for reboot to complete
+      async_status:
+        jid: "{{ reboot_task.ansible_job_id }}"
+        wait: 300
+        register: reboot_result
 
-   - name: Check the reboot is successful
-     assert:
-      that: reboot_result.finished
-      when: reboot_result.finished
+    - name: Check the reboot is successful
+      assert:
+        that: reboot_result.finished
+        when: reboot_result.finished
