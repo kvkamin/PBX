@@ -4,4 +4,8 @@
   become: yes
   tasks:
    - name: Reboot 
-     reboot:     
+     ansible.builtin.shell: 
+      cmd: sudo init 6     
+
+     
+     
