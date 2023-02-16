@@ -4,5 +4,5 @@
   become: true
   tasks:
     - name: Reboot host and wait for it to restart
-      ansible.builtin.shell: sudo init 6
+      ansible.builtin.shell: sudo shutdown -r +1 && exit
         
