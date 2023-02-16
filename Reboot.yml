@@ -1,6 +1,7 @@
 # ansible-playbook PBX.yml
 
-- name: Unconditionally reboot the machine with all defaults
-  ansible.builtin.reboot:
-
-          
+- hosts: all
+  become: yes
+  tasks:
+   - name: Reboot 
+     reboot:     
