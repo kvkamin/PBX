@@ -3,6 +3,7 @@
   become: true
   tasks:
     - name: Reboot the system
+      become: true
       reboot:
         reboot_timeout: 600
         pre_reboot_delay: 0
