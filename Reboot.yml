@@ -1,8 +1,8 @@
-# ansible-playbook PBX.yml
-
 - hosts: all
   become: true
   tasks:
     - name: Reboot host and wait for it to restart
-      ansible.builtin.shell: sudo echo "init 6" | at now +1 minute && exit
+      reboot:
+        reboot_timeout:600
+
         
