@@ -1,8 +1,22 @@
-- hosts: all
+- name: Reboot and wait for RedHat system to come back up
+  hosts: all
   become: true
   tasks:
-    - name: Reboot host and wait for it to restart
+    - name: Reboot the system
       reboot:
-        reboot_timeout:600
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 0
+        test_command: uptime
+        connect_timeout: 60
+        reboot_timeout: 300
+      async: 0
+      poll: 0
+      ignore_errors: true
+      register: reboot_result
 
+    - name: Wait for system to come back up
+      wait_for_connection:
+        timeout: 300
+      when: reboot_result is succeeded
         
