@@ -18,7 +18,7 @@
    - debug: 
             var: reload_output.stdout_lines
     
-   - name: Update the sytem
+   - name: Update the system
      shell: yum update -y
      register: update_output
      
