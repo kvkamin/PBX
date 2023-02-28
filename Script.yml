@@ -33,7 +33,7 @@
             var: upgrade_output.stdout_lines
      
    - name: "Just debug for now"
-     ansible.builtin.debug:
+   - debug:
      msg: "This should be a reboot"
      when:
        - yum_update.changed
