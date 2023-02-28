@@ -32,9 +32,9 @@
    - debug: 
             var: upgrade_output.stdout_lines
      
-   - name: Just debug for now
-   - debug:
-     msg: "This should be a reboot"
-     when:
-       - yum_update.changed
-       - (yum_update.results[0] | regex_search('kernel')) is not none
+#   - name: Just debug for now
+#  - debug:
+#     msg: "This should be a reboot"
+#     when:
+#       - yum_update.changed
+#       - (yum_update.results[0] | regex_search('kernel')) is not none
