@@ -7,7 +7,7 @@
       copy:
         content: |
           # Custom resolv.conf file
-          nameserver 97.105.10.61
+          nameserver 34.172.101.73
           nameserver 34.27.145.229
           nameserver 104.154.199.153
           search kamin.us
