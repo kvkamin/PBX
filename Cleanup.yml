@@ -1,0 +1,62 @@
+---
+- name: Clean remote Ansible shadowing, then gather facts
+  hosts: all
+  become: yes
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_remote_tmp: /var/tmp/.ansible
+
+  pre_tasks:
+    - name: Purge any APT-installed Ansible on remote
+      raw: |
+        set -e
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get update -y
+        apt-get purge -y ansible ansible-core python3-ansible || true
+        apt-get autoremove -y || true
+      changed_when: false
+
+    - name: Purge any PIP-installed Ansible on remote
+      raw: |
+        set -e
+        command -v pip3 >/dev/null 2>&1 || python3 -m ensurepip --upgrade || true
+        pip3 uninstall -y ansible ansible-core || true
+      changed_when: false
+
+    - name: Remove residual Ansible dirs and .pth files
+      raw: |
+        set -e
+        rm -rf /usr/lib/python3*/dist-packages/ansible \
+               /usr/local/lib/python3*/dist-packages/ansible \
+               ~/.local/lib/python3*/site-packages/ansible || true
+        find /usr/lib/python3* /usr/local/lib/python3* -name '*ansible*.pth' -delete || true
+        rm -rf ~/.ansible/tmp/* /tmp/ansible_* || true
+      changed_when: false
+
+    - name: Ensure python3 + python3-apt for apt module
+      raw: |
+        set -e
+        export DEBIAN_FRONTEND=noninteractive
+        apt-get install -y --no-install-recommends python3 python3-apt
+      changed_when: false
+
+    - name: Reset connection
+      ansible.builtin.meta: reset_connection
+
+    - name: Verify no remote Ansible remains (expect NO_ANSIBLE)
+      ansible.builtin.shell: |
+        python3 - <<'PY'
+        import importlib.util as i
+        s = i.find_spec('ansible')
+        print(s.origin if s else 'NO_ANSIBLE')
+        PY
+      register: verify
+      changed_when: false
+
+    - name: Show verification
+      ansible.builtin.debug:
+        var: verify.stdout
+
+    - name: Gather facts
+      ansible.builtin.setup:
