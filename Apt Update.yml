@@ -1,32 +1,64 @@
 # ansible-playbook 
 
-- name: Dist-upgrade Ubuntu 24.x hosts and reboot if needed
+---
+- name: Dist-upgrade Ubuntu and reboot if needed (fix remote Ansible shadowing)
   hosts: all
   become: yes
   gather_facts: false
 
   vars:
     ansible_python_interpreter: /usr/bin/python3
+    ansible_remote_tmp: /var/tmp/.ansible
 
   pre_tasks:
-    - name: Ensure apt works and python3-apt is present (first-contact bootstrap)
+    - name: Ensure apt cache is current
       raw: |
         set -e
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -y
+      changed_when: false
+
+    - name: Remove any APT-installed Ansible on the remote (it is NOT needed)
+      raw: |
+        set -e
+        if dpkg -l | grep -E '^\S+\s+(ansible|ansible-core|python3-ansible)\b' >/dev/null 2>&1; then
+          apt-get purge -y ansible ansible-core python3-ansible || true
+          apt-get autoremove -y || true
+        fi
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Remove any PIP-installed Ansible on the remote (if present)
+      raw: |
+        set -e
+        command -v pip3 >/dev/null 2>&1 || python3 -m ensurepip --upgrade || true
+        pip3 uninstall -y ansible ansible-core || true
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Install minimal Python deps for Ansible modules
+      raw: |
+        set -e
+        export DEBIAN_FRONTEND=noninteractive
         apt-get install -y --no-install-recommends python3 python3-apt
       args:
         executable: /bin/bash
       changed_when: false
 
-    - name: Reset connection so Ansible switches from raw to normal modules
+    - name: Clean remote/controller Ansible temp dirs (remote side)
+      raw: rm -rf ~/.ansible/tmp/* /tmp/ansible_* || true
+      changed_when: false
+
+    - name: Reset connection after bootstrap/cleanup
       ansible.builtin.meta: reset_connection
 
     - name: Gather facts now that Python deps are in place
       ansible.builtin.setup:
 
   tasks:
-    - name: Upgrade OS on Debian/Ubuntu family (dist-upgrade)
+    - name: Upgrade OS on Debian/Ubuntu (dist-upgrade)
       ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: 3600
@@ -48,4 +80,3 @@
         msg: "Reboot initiated by Ansible after dist-upgrade"
         reboot_timeout: 900
       when: reboot_required_file.stat.exists | default(false)
-     
