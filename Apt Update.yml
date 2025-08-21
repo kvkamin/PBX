@@ -1,7 +1,8 @@
 # ansible-playbook 
 
 ---
-- name: Dist-upgrade Ubuntu and reboot if needed (fix remote Ansible shadowing)
+---
+- name: Fix remote Ansible shadowing, upgrade, and reboot if needed
   hosts: all
   become: yes
   gather_facts: false
@@ -11,54 +12,77 @@
     ansible_remote_tmp: /var/tmp/.ansible
 
   pre_tasks:
-    - name: Ensure apt cache is current
+    - name: Update apt cache
       raw: |
         set -e
         export DEBIAN_FRONTEND=noninteractive
         apt-get update -y
       changed_when: false
 
-    - name: Remove any APT-installed Ansible on the remote (it is NOT needed)
+    - name: Purge any APT-installed Ansible on remote
       raw: |
         set -e
-        if dpkg -l | grep -E '^\S+\s+(ansible|ansible-core|python3-ansible)\b' >/dev/null 2>&1; then
+        if dpkg -l | awk '{print $2}' | grep -Eqx '(ansible|ansible-core|python3-ansible)'; then
           apt-get purge -y ansible ansible-core python3-ansible || true
           apt-get autoremove -y || true
         fi
-      args:
-        executable: /bin/bash
+      args: { executable: /bin/bash }
       changed_when: false
 
-    - name: Remove any PIP-installed Ansible on the remote (if present)
+    - name: Uninstall any PIP-installed Ansible on remote
       raw: |
         set -e
         command -v pip3 >/dev/null 2>&1 || python3 -m ensurepip --upgrade || true
         pip3 uninstall -y ansible ansible-core || true
-      args:
-        executable: /bin/bash
+      args: { executable: /bin/bash }
       changed_when: false
 
-    - name: Install minimal Python deps for Ansible modules
+    - name: Remove residual Ansible dirs and .pth files
+      raw: |
+        set -e
+        rm -rf /usr/local/lib/python3*/dist-packages/ansible \
+               /usr/lib/python3*/dist-packages/ansible \
+               /usr/local/lib/python3*/site-packages/ansible \
+               /usr/lib/python3*/site-packages/ansible || true
+        find /usr/lib/python3*/ -name "*ansible*.pth" -delete || true
+        find /usr/local/lib/python3*/ -name "*ansible*.pth" -delete || true
+      args: { executable: /bin/bash }
+      changed_when: false
+
+    - name: Install minimal Python deps for Ansible
       raw: |
         set -e
         export DEBIAN_FRONTEND=noninteractive
         apt-get install -y --no-install-recommends python3 python3-apt
-      args:
-        executable: /bin/bash
+      args: { executable: /bin/bash }
       changed_when: false
 
-    - name: Clean remote/controller Ansible temp dirs (remote side)
+    - name: Clean remote temp dirs
       raw: rm -rf ~/.ansible/tmp/* /tmp/ansible_* || true
       changed_when: false
 
-    - name: Reset connection after bootstrap/cleanup
+    - name: Reset SSH connection
       ansible.builtin.meta: reset_connection
 
-    - name: Gather facts now that Python deps are in place
+    - name: Verify no remote Ansible remains (should print NO_ANSIBLE)
+      ansible.builtin.shell: |
+        python3 - <<'PY'
+        import importlib.util
+        spec = importlib.util.find_spec('ansible')
+        print(spec.origin if spec else 'NO_ANSIBLE')
+        PY
+      register: verify_ansible_remote
+      changed_when: false
+
+    - name: Show verification result
+      ansible.builtin.debug:
+        var: verify_ansible_remote.stdout
+
+    - name: Gather facts
       ansible.builtin.setup:
 
   tasks:
-    - name: Upgrade OS on Debian/Ubuntu (dist-upgrade)
+    - name: Dist-upgrade
       ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: 3600
@@ -70,7 +94,7 @@
       environment:
         DEBIAN_FRONTEND: noninteractive
 
-    - name: Check if reboot is required
+    - name: Check if reboot required
       ansible.builtin.stat:
         path: /var/run/reboot-required
       register: reboot_required_file
