@@ -1,7 +1,6 @@
 # ansible-playbook 
 
 ---
----
 - name: Fix remote Ansible shadowing, upgrade, and reboot if needed
   hosts: all
   become: yes
