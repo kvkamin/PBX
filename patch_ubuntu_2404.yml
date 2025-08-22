@@ -1,0 +1,53 @@
+---
+- name: Patch Ubuntu 24.04 and reboot if needed
+  hosts: all                      # or a group like ubuntu_2404
+  become: yes
+  gather_facts: yes
+  serial: 1                       # change to 10% or 2,3,... if you want batches
+  vars:
+    apt_cache_valid_time: 3600    # seconds
+    reboot_timeout: 1800          # seconds
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+  pre_tasks:
+    - name: Ensure this is Ubuntu 24.04
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] == 'Ubuntu'
+          - ansible_facts['distribution_version'] is version('24.04', '=')
+        fail_msg: "This playbook is intended for Ubuntu 24.04 only."
+        success_msg: "Ubuntu 24.04 confirmed."
+
+    # Ensures /var/run/reboot-required gets created when needed
+    - name: Ensure update-notifier-common is present
+      ansible.builtin.apt:
+        name: update-notifier-common
+        state: present
+        update_cache: yes
+        cache_valid_time: "{{ apt_cache_valid_time }}"
+
+  tasks:
+    - name: Update apt cache (if stale)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: "{{ apt_cache_valid_time }}"
+
+    - name: Upgrade all packages (dist-upgrade/full-upgrade)
+      ansible.builtin.apt:
+        upgrade: dist          # dist == full-upgrade (includes kernel/deps)
+
+    - name: Autoremove unused packages
+      ansible.builtin.apt:
+        autoremove: yes
+
+    - name: Check if a reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible after updates"
+        reboot_timeout: "{{ reboot_timeout }}"
+      when: reboot_required_file.stat.exists
