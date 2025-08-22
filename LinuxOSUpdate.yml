@@ -1,95 +1,42 @@
 ---
-- name: Patch Linux hosts and reboot only if required
-  hosts: all                       # or a group
+- name: Update apt systems and reboot if needed
+  hosts: all
   become: yes
   gather_facts: yes
-  serial: 1                        # change to "20%" or 2 for batches
   vars:
-    apt_cache_valid_time: 3600
-    reboot_timeout: 1800
+    apt_cache_valid_time: 3600   # seconds
+    reboot_timeout: 1800         # seconds
+  environment:
+    DEBIAN_FRONTEND: noninteractive
 
-  pre_tasks:
-    # Helps Debian/Ubuntu create /var/run/reboot-required
-    - name: (Debian/Ubuntu) Ensure update-notifier-common present
+  tasks:
+    - name: Ensure reboot flag support is present
       ansible.builtin.apt:
         name: update-notifier-common
         state: present
         update_cache: yes
         cache_valid_time: "{{ apt_cache_valid_time }}"
-      environment: { DEBIAN_FRONTEND: noninteractive }
-      when: ansible_facts.os_family == 'Debian'
 
-  tasks:
-    # ---- Debian/Ubuntu ----
-    - name: (Debian/Ubuntu) Update package cache
+    - name: Update apt cache
       ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: "{{ apt_cache_valid_time }}"
-      environment: { DEBIAN_FRONTEND: noninteractive }
-      when: ansible_facts.os_family == 'Debian'
 
-    - name: (Debian/Ubuntu) Full upgrade (kernel allowed)
+    - name: Upgrade all packages (full upgrade)
       ansible.builtin.apt:
         upgrade: dist
-      environment: { DEBIAN_FRONTEND: noninteractive }
-      when: ansible_facts.os_family == 'Debian'
 
-    - name: (Debian/Ubuntu) Autoremove unused packages
+    - name: Autoremove unused packages
       ansible.builtin.apt:
         autoremove: yes
-      environment: { DEBIAN_FRONTEND: noninteractive }
-      when: ansible_facts.os_family == 'Debian'
 
-    - name: (Debian/Ubuntu) Check reboot-required flag
+    - name: Check if a reboot is required
       ansible.builtin.stat:
         path: /var/run/reboot-required
-      register: deb_reboot_flag
-      when: ansible_facts.os_family == 'Debian'
-
-    # ---- RHEL/Alma/Rocky/CentOS ----
-    - name: (RHEL-family) Refresh metadata and update all to latest
-      ansible.builtin.dnf:
-        name: '*'
-        state: latest
-        update_cache: yes
-      when: ansible_facts.os_family == 'RedHat'
-
-    - name: (RHEL-family) Autoremove unused packages (best effort)
-      ansible.builtin.dnf:
-        autoremove: yes
-      register: dnf_autorm
-      failed_when: false
-      when: ansible_facts.os_family == 'RedHat'
-
-    - name: (RHEL-family) Ensure needs-restarting tool is present (best effort)
-      ansible.builtin.package:
-        name:
-          - dnf-utils
-          - yum-utils
-        state: present
-      register: nr_installed
-      failed_when: false
-      when: ansible_facts.os_family == 'RedHat'
-
-    - name: (RHEL-family) Check if reboot is required
-      ansible.builtin.command: needs-restarting -r
-      register: needs_restarting
-      changed_when: false
-      failed_when: false
-      when: ansible_facts.os_family == 'RedHat'
-
-    # ---- Decide and reboot (common) ----
-    - name: Decide if reboot is needed
-      ansible.builtin.set_fact:
-        reboot_needed: >-
-          {{
-            (ansible_facts.os_family == 'Debian' and deb_reboot_flag.stat.exists | default(false))
-            or
-            (ansible_facts.os_family == 'RedHat' and needs_restarting.rc is defined and needs_restarting.rc == 1)
-          }}
+      register: reboot_required
 
     - name: Reboot if required
       ansible.builtin.reboot:
-        msg: "Reboot initiated by Ansible after updates"
+        msg: "Reboot after updates"
         reboot_timeout: "{{ reboot_timeout }}"
-      when: reboot_needed | bool
+      when: reboot_required.stat.exists
