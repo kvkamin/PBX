@@ -1,0 +1,53 @@
+---
+- name: Patch Debian 12.x and reboot if needed
+  hosts: debian12            # or "all" / your group
+  become: yes
+  gather_facts: yes
+  serial: 1                  # change to 10% or 2 for small batches
+  vars:
+    apt_cache_valid_time: 3600   # seconds
+    reboot_timeout: 1800         # seconds
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+  pre_tasks:
+    - name: Ensure this is Debian 12.x (Bookworm)
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] == 'Debian'
+          - ansible_facts['distribution_major_version'] == '12'
+        fail_msg: "This playbook is intended for Debian 12.x only."
+        success_msg: "Debian 12.x confirmed."
+
+    # Debian/Ubuntu create /var/run/reboot-required when a reboot is needed
+    - name: Ensure update-notifier-common is present (for reboot-required flag)
+      ansible.builtin.apt:
+        name: update-notifier-common
+        state: present
+        update_cache: yes
+        cache_valid_time: "{{ apt_cache_valid_time }}"
+
+  tasks:
+    - name: Update apt cache (if stale)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: "{{ apt_cache_valid_time }}"
+
+    - name: Upgrade all packages (full-upgrade / dist-upgrade)
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Autoremove unused packages
+      ansible.builtin.apt:
+        autoremove: yes
+
+    - name: Check if a reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible after updates"
+        reboot_timeout: "{{ reboot_timeout }}"
+      when: reboot_required_file.stat.exists
