@@ -1,25 +1,26 @@
 ---
 - name: Patch Debian 12.x and reboot if needed
-  hosts: debian12            # or "all" / your group
+  hosts: all
   become: yes
   gather_facts: yes
-  serial: 1                  # change to 10% or 2 for small batches
+  serial: 1
   vars:
-    apt_cache_valid_time: 3600   # seconds
-    reboot_timeout: 1800         # seconds
+    apt_cache_valid_time: 3600
+    reboot_timeout: 1800
   environment:
     DEBIAN_FRONTEND: noninteractive
 
   pre_tasks:
-    - name: Ensure this is Debian 12.x (Bookworm)
-      ansible.builtin.assert:
-        that:
-          - ansible_facts['distribution'] == 'Debian'
-          - ansible_facts['distribution_major_version'] == '12'
-        fail_msg: "This playbook is intended for Debian 12.x only."
-        success_msg: "Debian 12.x confirmed."
+    - name: Determine if host is Debian 12.x
+      ansible.builtin.set_fact:
+        is_debian12: >-
+          {{ ansible_facts.distribution == 'Debian'
+             and ansible_facts.distribution_major_version == '12' }}
 
-    # Debian/Ubuntu create /var/run/reboot-required when a reboot is needed
+    - name: Skip non-Debian 12 hosts
+      ansible.builtin.meta: end_host
+      when: not is_debian12
+
     - name: Ensure update-notifier-common is present (for reboot-required flag)
       ansible.builtin.apt:
         name: update-notifier-common
