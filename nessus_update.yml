@@ -1,5 +1,5 @@
 ---
-- name: Patch Ubuntu 22, update Nessus, and reboot if required
+- name: Patch Ubuntu 22, update Nessus, and reboot if required (no autoremove)
   hosts: all
   gather_facts: true
   become: true
@@ -23,10 +23,9 @@
       environment:
         DEBIAN_FRONTEND: noninteractive
 
-    - name: Upgrade packages (dist-upgrade) and autoremove
+    - name: Upgrade packages (dist-upgrade)
       ansible.builtin.apt:
         upgrade: dist
-        autoremove: yes
         force_apt_get: yes
       environment:
         DEBIAN_FRONTEND: noninteractive
@@ -36,7 +35,7 @@
         name: nessusd
         state: stopped
       register: nessus_stop_result
-      failed_when: false   # don't fail if service doesn't exist
+      failed_when: false
 
     - name: Check for nessuscli
       ansible.builtin.stat:
@@ -47,7 +46,7 @@
       ansible.builtin.command: /opt/nessus/sbin/nessuscli update
       when: nessuscli.stat.exists
       register: nessus_update
-      changed_when: "'No updates available' not in nessus_update.stdout | default('')"
+      changed_when: "'No updates available' not in (nessus_update.stdout | default(''))"
 
     - name: Check if a reboot is required
       ansible.builtin.stat:
