@@ -1,0 +1,70 @@
+---
+- name: Patch Ubuntu 22, update Nessus, and reboot if required
+  hosts: all
+  gather_facts: true
+  become: true
+
+  vars:
+    reboot_timeout: 1800
+
+  tasks:
+    - name: Ensure we are on Ubuntu 22.x
+      assert:
+        that:
+          - ansible_facts.distribution == "Ubuntu"
+          - ansible_facts.distribution_major_version == "22"
+        fail_msg: "This playbook is intended for Ubuntu 22.x only."
+
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+        force_apt_get: yes
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Upgrade packages (dist-upgrade) and autoremove
+      ansible.builtin.apt:
+        upgrade: dist
+        autoremove: yes
+        force_apt_get: yes
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Stop Nessus service if present
+      ansible.builtin.systemd:
+        name: nessusd
+        state: stopped
+      register: nessus_stop_result
+      failed_when: false   # don't fail if service doesn't exist
+
+    - name: Check for nessuscli
+      ansible.builtin.stat:
+        path: /opt/nessus/sbin/nessuscli
+      register: nessuscli
+
+    - name: Update Nessus plugins (nessuscli update)
+      ansible.builtin.command: /opt/nessus/sbin/nessuscli update
+      when: nessuscli.stat.exists
+      register: nessus_update
+      changed_when: "'No updates available' not in nessus_update.stdout | default('')"
+
+    - name: Check if a reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Reboot if required
+      ansible.builtin.reboot:
+        msg: "Rebooting to complete updates"
+        reboot_timeout: "{{ reboot_timeout }}"
+      when: reboot_required.stat.exists
+
+    - name: Start Nessus if no reboot will occur
+      ansible.builtin.systemd:
+        name: nessusd
+        state: started
+        enabled: yes
+      when:
+        - not reboot_required.stat.exists
+        - nessuscli.stat.exists
