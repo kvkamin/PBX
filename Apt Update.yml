@@ -86,10 +86,10 @@
         update_cache: yes
         cache_valid_time: 3600
         upgrade: dist
-        autoremove: yes
+        autoremove: no
         autoclean: yes
         lock_timeout: 600
-        dpkg_options: "--force-confdef --force-confold"
+        dpkg_options: "force-confdef,force-confold"
       environment:
         DEBIAN_FRONTEND: noninteractive
 
