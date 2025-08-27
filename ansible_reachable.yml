@@ -1,19 +1,23 @@
 ---
 - name: Show "is now Reachable" lines from Asterisk logs
-  hosts: FreePBX
+  hosts: all                  # AWX Job Template inventory/limit controls targets
   gather_facts: false
-  become: true                 # usually required to read /var/log/asterisk/full
+  become: true                # needed on most systems to read /var/log/asterisk/full
+
+  vars:
+    log_path: "/var/log/asterisk/full"
+    match_text: "is now Reachable"
 
   tasks:
-    - name: Confirm the Asterisk full log exists
+    - name: Check if Asterisk log exists
       ansible.builtin.stat:
-        path: /var/log/asterisk/full
+        path: "{{ log_path }}"
       register: asterisk_log
 
     - name: Read matching lines (if file exists)
       ansible.builtin.shell: |
         set -o pipefail
-        grep -F "is now Reachable" /var/log/asterisk/full || true
+        grep -F "{{ match_text }}" "{{ log_path }}" || true
       args:
         executable: /bin/bash
       register: reachable
@@ -25,7 +29,7 @@
         msg: |-
           ==== {{ inventory_hostname }} ====
           {% if not asterisk_log.stat.exists %}
-          /var/log/asterisk/full not found
+          {{ log_path }} not found
           {% elif reachable.stdout %}
           {{ reachable.stdout }}
           {% else %}
