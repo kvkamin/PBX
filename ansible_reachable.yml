@@ -1,5 +1,6 @@
 ---
 - name: Show "is now Reachable" lines from Asterisk logs
+  hosts: FreePBX
   gather_facts: false
   become: true                 # usually required to read /var/log/asterisk/full
 
